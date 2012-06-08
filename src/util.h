@@ -5,6 +5,8 @@
 #ifndef __BASIC_UTIL_EOAIX__
 #define __BASIC_UTIL_EOAIX__
 
+#include <iostream>
+
 namespace eoaix {
 
 	/*
@@ -28,6 +30,8 @@ namespace eoaix {
 		}
 	};
 
-};
+	int square(int n);
+
+}
 
 #endif
