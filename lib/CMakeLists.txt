@@ -1,4 +1,6 @@
 
-SET(LIB_SRC ../src/hash.cpp)
+#SET(LIB_SRC ../src/hash.cpp)
 
-ADD_LIBRARY(main STATIC ${LIB_SRC})
+AUX_SOURCE_DIRECTORY(../src/ dir_srcs)
+
+ADD_LIBRARY(main STATIC ${dir_srcs})

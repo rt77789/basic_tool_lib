@@ -10,10 +10,29 @@
 namespace eoaix {
 
 #ifndef TEMP_KEY_VALUE
-#define TEMP_KEY_VALUE template<class Key, class Value> 
+	#define TEMP_KEY_VALUE template<class Key, class Value> 
 #else
-#error TEMP_KEY_VALUE defined ever.
+	#error TEMP_KEY_VALUE defined ever.
 #endif
+
+#define HASH_FUNC(ty) 						\
+size_t hash_func(const ty& key) const {     \
+	return key % HASH_TABLE_SIZE;	\
+}\
+
+#define FIND_NODE(ty)						\
+	_Node* find_node(const ty& key) const {	\
+		size_t hval = hash_func(key);	\
+		_Node* ptr = _blocks[hval];		\
+		while(ptr) {					\
+			if(ptr->_key == key) {		\
+				break;					\
+			}							\
+			ptr = ptr->next;			\
+		}								\
+		return ptr;						\
+	}											\
+
 
 	TEMP_KEY_VALUE
 		class HashNode {
@@ -36,6 +55,13 @@ namespace eoaix {
 
 #define HASH_TABLE_SIZE (1<<5)
 		public:
+
+		/**
+		  * Whether key is in the hash table.
+		  */
+		bool contains(const Key& key) const {
+			return find_node(key) == NULL ? false : true;
+		}
 
 		/* Insert a new <key, value> pair. */
 		void insert(const Key& key, const Value& val) {
@@ -95,7 +121,8 @@ namespace eoaix {
 		private:
 
 		/* Find the HashNode corresponding to key. */
-		_Node* find_node(const Key& key) const {
+		template<class TKey>
+		_Node* find_node(const TKey& key) const {
 			size_t hval = hash_func(key);
 
 			_Node* ptr = _blocks[hval];
@@ -110,16 +137,52 @@ namespace eoaix {
 			return ptr;
 		}
 
+		/**
+		  * Specialize find_node funtions.
+		  */
+		FIND_NODE(int)
+		FIND_NODE(unsigned int)
+		FIND_NODE(long)
+		FIND_NODE(unsigned long)
+		FIND_NODE(long long)
+		FIND_NODE(unsigned long long)
+		FIND_NODE(short)
+		FIND_NODE(unsigned short)
 
+		/**
+		 * Specialize find_node<string> function.
+		 */
+		FIND_NODE(std::string)
 
 		/* Calculate Hash value by this function. Key must override a funtion named toString(). */
-		size_t hash_func(const Key& key) const {
-			std::string str = key.toString();
+		template<class TKey>
+		size_t hash_func(const TKey& key) const {
+			//std::string str = key.toString();
+			return hash_func(key.toString());
+		}
+
+		/* Override this function with parameter type 'int' & 'std::string'.
+		   This is a little simple, specialize member functions.
+		 */
+		
+		HASH_FUNC(short)
+		HASH_FUNC(unsigned short)
+
+		HASH_FUNC(int)
+		HASH_FUNC(unsigned int)
+
+		HASH_FUNC(long)
+		HASH_FUNC(unsigned long)
+
+		HASH_FUNC(long long)
+		HASH_FUNC(unsigned long long)
+
+		size_t hash_func(const std::string& key) const {
 			size_t mask = 0;
-			for(size_t i = 0; i < str.size(); ++i) {
-				mask += str[i];	
+			for(size_t i = 0; i < key.size(); ++i) {
+				mask += key[i];	
 #ifdef DEBUG
-				std::cout << "mask=" << mask << " , str[" << i << "]=" << str[i] << std::endl;
+				std::cout << "mask=" << mask << " , key[" << i << "]=" << key[i] << std::endl;
 #endif
 			}
 #ifdef DEBUG
@@ -127,7 +190,6 @@ namespace eoaix {
 #endif
 			return mask % HASH_TABLE_SIZE;
 		}
-
 
 		/* Free the memory that malloc in insert function. */
 		void delloc() {
@@ -158,6 +220,7 @@ namespace eoaix {
 				delete ans;
 			}
 		}
+
 
 		HashNode<Key, Value>* _blocks[HASH_TABLE_SIZE];
 	};
