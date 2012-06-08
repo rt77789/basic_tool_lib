@@ -14,7 +14,7 @@ namespace eoaix {
 	   t.elapsed() returns the elapse time.
 	 */
 	class Timer {
-		std::clock_t _start;
+		clock_t _start;
 
 		public:
 		Timer() {
@@ -22,11 +22,11 @@ namespace eoaix {
 		}
 
 		void reset() {
-			_start = std::clock();
+			_start = clock();
 		}
 
 		double elapsed() {
-			return double(std::clock() - _start) /CLOCKS_PER_SEC;   
+			return double(clock() - _start) /CLOCKS_PER_SEC;   
 		}
 	};
 
