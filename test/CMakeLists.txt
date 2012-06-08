@@ -1,7 +1,7 @@
 
 MESSAGE("Unit Test Here.")
 
-AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/test/ dir_test)
+AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/test/ test_hash.cpp)# dir_test)
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/ dir_srcs)
 
 
@@ -10,6 +10,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 
 ADD_EXECUTABLE(test_all ${dir_srcs} ${dir_test})
+ADD_EXECUTABLE(test_main ${dir_srcs} main.cpp)
 
 MESSAGE(${PROJECT_SOURCE_DIR}/lib)
 

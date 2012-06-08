@@ -32,6 +32,17 @@ namespace eoaix {
 
 	int square(int n);
 
+	class TestKey {
+		int _val_int;
+		std::string _val_str;
+
+		public:
+			TestKey(int val_int, const std::string& val_str);
+			~TestKey();
+
+			std::string toString() const;
+	};
+
 }
 
 #endif
