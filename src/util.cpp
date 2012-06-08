@@ -1,5 +1,6 @@
 
 #include "util.h"
+#include <cstdlib>
 
 namespace eoaix {
 	int square(int n) {

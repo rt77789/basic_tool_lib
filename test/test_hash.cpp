@@ -17,8 +17,9 @@ TEST(HashTest, NormalHash) {
 	htable.insert(t1, t2);
 	htable.insert(t2, t1);
 
-	//TestKey* t3 = htable.find_val(t1);
+	TestKey* t3 = htable.find_val(t1);
 	
-	//std::cout << t3->toString() << std::endl;
-	//EXPECT_EQ(t3->toString(), t2.toString());
+//	std::cout << t3->toString() << std::endl;
+	//std::cout << t2.toString() << std::endl;
+	EXPECT_EQ(t3->toString(), t2.toString());
 }

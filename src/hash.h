@@ -4,6 +4,8 @@
 
 #include <cstdio>
 #include <iostream>
+#include <cstring>
+//#define DEBUG
 
 namespace eoaix {
 
@@ -32,13 +34,16 @@ namespace eoaix {
 		typedef HashNode<Key, Value> _Node;
 		typedef HashMap<Key, Value> _Map;
 
-#define HASH_TABLE_SIZE 1<<5
+#define HASH_TABLE_SIZE (1<<5)
 		public:
 
 		/* Insert a new <key, value> pair. */
 		void insert(const Key& key, const Value& val) {
 
 			size_t hval = hash_func(key);
+#ifdef DEBUG
+			std::cout << "key.toString()=" << key.toString() << " ,hash func returns: " << hval << std::endl;
+#endif
 
 			if(hval >= HASH_TABLE_SIZE) {
 				throw ;
@@ -46,13 +51,8 @@ namespace eoaix {
 
 			_Node* node = new _Node(key, val);
 
-			if(_blocks[hval] == NULL) {
-				_blocks[hval] = node;
-			}
-			else {
-				node->next = _blocks[hval]->next;
-				_blocks[hval]->next = node;
-			}
+			node->next = _blocks[hval];
+			_blocks[hval] = node;
 		}
 
 
@@ -70,9 +70,9 @@ namespace eoaix {
 		void remove(const Key& key) {
 			_Node* ptr = find_node(key);
 			if(ptr) {
-				_Node* ans = ptr->next;
-				delete ptr;
-				ptr = ans;
+				_Node* ans = ptr;
+				ptr = ptr->next;
+				delete ans;
 			}
 		}
 
@@ -80,7 +80,9 @@ namespace eoaix {
 
 		HashMap() {
 			/* Set the _blocks as NULL at the beginning. */
-			memset(_blocks, 0, sizeof(_blocks) * HASH_TABLE_SIZE);
+			//memset(_blocks, NULL, sizeof(HashNode<Key, Value>*) * HASH_TABLE_SIZE);
+			for(size_t i = 0; i < HASH_TABLE_SIZE; ++i)
+				_blocks[i] = NULL;
 		}
 
 
@@ -116,7 +118,13 @@ namespace eoaix {
 			size_t mask = 0;
 			for(size_t i = 0; i < str.size(); ++i) {
 				mask += str[i];	
+#ifdef DEBUG
+				std::cout << "mask=" << mask << " , str[" << i << "]=" << str[i] << std::endl;
+#endif
 			}
+#ifdef DEBUG
+			std::cout << "mask=" << mask << " ,HASH_TABLE_SIZE=" << HASH_TABLE_SIZE << " , mask % HASH_TABLE_SIZE = " << mask % HASH_TABLE_SIZE << std::endl;
+#endif
 			return mask % HASH_TABLE_SIZE;
 		}
 
@@ -138,11 +146,16 @@ namespace eoaix {
 		/* Free the memory of a list, index indicates which list. */
 		inline void delloc_list(size_t index) {
 			_Node* ptr = _blocks[index];
-			while(ptr) {
-				_Node* ans = ptr->next;
 
-				delete ptr;
-				ptr = ans;
+			while(ptr != NULL) {
+				_Node* ans = ptr;
+#ifdef DEBUG
+				std::cout << "index: " << index << " , key:" << ptr->_key.toString() << " , val:" << ptr->_val.toString()
+					<< " ,ptr->next:" << ptr->next << std::endl;
+#endif
+
+				ptr = ptr->next;
+				delete ans;
 			}
 		}
 
