@@ -43,6 +43,9 @@ namespace eoaix {
 			std::string toString() const;
 	};
 
+	void test_func() {
+		// This is a test function.
+	}
 }
 
 #endif
